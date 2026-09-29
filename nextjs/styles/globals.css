@@ -2,22 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Match Up brand (shadcn tokens, HSL triplets). Inspired by a synthetic
+  badminton court: green floor, white boundary lines, and a cork-orange
+  shuttle as the single hot accent.
+
+  Court green   --primary     160 62% 16%  #0F4232  brand, headings, primary buttons, "booked" slots
+  Line white    --background  140 18% 97%  #F5F8F6  page surface (cool, not cream); --card is pure white
+  Ink           --foreground  165 45% 9%   #0D211B  body text
+  Shuttle cork  --accent      22 92% 54%   #F27A1A  Pro, CTAs, focus ring, "held" slots (use ink text on it)
+  Mist          --secondary / --muted  150 22% 92%  #E6EEEA  quiet fills and separators
+  Type: Prompt (self-hosted), heavy weights with tight tracking for headlines.
+*/
+@font-face {
+  font-family: "Prompt";
+  src: url("/Prompt/Prompt-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Prompt";
+  src: url("/Prompt/Prompt-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Prompt";
+  src: url("/Prompt/Prompt-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Prompt";
+  src: url("/Prompt/Prompt-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Prompt";
+  src: url("/Prompt/Prompt-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-display: swap;
+}
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 140 18% 97%;
+    --foreground: 165 45% 9%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+    --card-foreground: 165 45% 9%;
+    --primary: 160 62% 16%;
+    --primary-foreground: 140 20% 97%;
+    --secondary: 150 22% 92%;
+    --secondary-foreground: 160 62% 16%;
+    --muted: 150 22% 92%;
+    --muted-foreground: 160 12% 34%;
+    --accent: 22 92% 54%;
+    --accent-foreground: 165 45% 9%;
+    --destructive: 0 72% 46%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 150 14% 84%;
+    --input: 150 14% 78%;
+    --ring: 22 92% 54%;
+    --radius: 0.625rem;
   }
 
   * {
@@ -25,6 +72,10 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+
+  h1, h2, h3 {
+    @apply tracking-tight;
   }
 }
