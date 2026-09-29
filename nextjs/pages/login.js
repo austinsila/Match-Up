@@ -1,105 +1,89 @@
-import { useState } from "react";
-import Link from "next/link";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
+import { AuthLink, AuthShell, FieldError } from "@/components/AuthShell";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { safeNext, useAuth } from "@/lib/auth";
+
+const schema = z.object({
+  email: z.string().min(1, "Enter your email").email("Enter a valid email address"),
+  password: z.string().min(1, "Enter your password"),
+});
 
 export default function Login() {
   const router = useRouter();
-  const [email, setEmail] = useState("demo@example.com");
-  const [password, setPassword] = useState("password");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { user, loading, login } = useAuth();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({ resolver: zodResolver(schema), defaultValues: { email: "", password: "" } });
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    setError("");
-    setLoading(true);
+  // Already logged in: skip the form.
+  useEffect(() => {
+    if (!loading && user && router.isReady) router.replace(safeNext(router.query.next));
+  }, [loading, user, router]);
 
+  async function onSubmit({ email, password }) {
     try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.detail || "Login failed");
-      }
-
-      const data = await response.json();
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("email", data.email);
-      router.push("/");
+      const me = await login(email, password);
+      toast.success(`Welcome back, ${me.full_name}`);
+      router.replace(safeNext(router.query.next));
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      toast.error(err.message);
     }
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Log in</CardTitle>
-          <CardDescription>
-            Use your email and password to access the starter application.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                autoComplete="email"
-                required
-              />
-            </div>
+    <AuthShell
+      title="Log in"
+      subtitle="Pick up where you left off and grab your court."
+      aside="Your court is waiting. Pick a slot, pay, and just show up."
+      footer={
+        <>
+          New to Match Up? <AuthLink href="/register">Create a free account</AuthLink>
+        </>
+      }
+    >
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? "email-error" : undefined}
+            {...register("email")}
+          />
+          <FieldError id="email-error" error={errors.email} />
+        </div>
 
-            <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">
-                Password
-              </label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                autoComplete="current-password"
-                required
-              />
-            </div>
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            autoComplete="current-password"
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? "password-error" : undefined}
+            {...register("password")}
+          />
+          <FieldError id="password-error" error={errors.password} />
+        </div>
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
-
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Logging in..." : "Log in"}
-            </Button>
-
-            <Button asChild variant="outline" className="w-full">
-              <Link href="/">Back to landing page</Link>
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </main>
+        <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />}
+          {isSubmitting ? "Logging in" : "Log in"}
+        </Button>
+      </form>
+    </AuthShell>
   );
 }
