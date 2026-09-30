@@ -18,3 +18,10 @@ node_modules/
 .DS_Store
 Thumbs.db
 .idea/
+
+# claude / agent files (never commit)
+CLAUDE.md
+TASKS.md
+.claude/
+.agents/
+skills-lock.json
