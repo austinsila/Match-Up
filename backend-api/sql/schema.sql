@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
     email                   VARCHAR(255) NOT NULL UNIQUE,
     password_hash           TEXT NOT NULL,
     user_role               TEXT NOT NULL DEFAULT 'customer'
-                            CHECK (user_role IN ('customer', 'coach', 'admin')),
+                            CHECK (user_role IN ('customer', 'admin')),
     tier_status             TEXT NOT NULL DEFAULT 'free'
                             CHECK (tier_status IN ('free', 'pro')),
     pro_expiry_date         TIMESTAMPTZ,

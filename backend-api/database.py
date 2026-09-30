@@ -28,7 +28,6 @@ DEMO_USERS = [
     # (full_name, email, password, role, tier)
     ("Demo Free", "free@matchup.test", "password", "customer", "free"),
     ("Demo Pro", "pro@matchup.test", "password", "customer", "pro"),
-    ("Demo Coach", "coach@matchup.test", "password", "coach", "free"),
     ("Demo Admin", "admin@matchup.test", "admin1234", "admin", "free"),
 ]
 

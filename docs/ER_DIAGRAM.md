@@ -14,7 +14,7 @@ erDiagram
         varchar full_name
         varchar email UK
         text password_hash
-        text user_role "customer|coach|admin"
+        text user_role "customer|admin"
         text tier_status "free|pro"
         timestamptz pro_expiry_date
         int accumulated_slots_count
