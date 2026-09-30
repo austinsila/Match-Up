@@ -36,6 +36,11 @@ FREE_ADVANCE_DAYS = 3
 PRO_ADVANCE_DAYS = 30
 PEAK_START_HOUR = 18
 PEAK_END_HOUR = 22
+HOLD_MAX_SLOTS = 8  # per user hold (4 h); one active hold per user
+EQUIPMENT_MAX_QTY = 4  # of each item, per booking
+CREDIT_MAX_SLOTS_PER_BOOKING = 2  # loyalty credits zero the court fee of up to 2 slots
+# Peak priority: these courts are Pro-only from PEAK_START_HOUR to PEAK_END_HOUR
+PEAK_PRO_ONLY_COURTS = tuple(range(11, COURT_COUNT + 1))  # Court 11 .. Court 16
 
 # --- Cancellation ---
 FREE_CANCEL_HOURS = 24

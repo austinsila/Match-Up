@@ -41,10 +41,14 @@ async def seed_history():
         created = datetime.combine(day, time(8, 0), tzinfo=timezone.utc) - timedelta(days=1)
         booking_id = await database.fetch_val(
             """
-            INSERT INTO bookings (user_id, total_amount, discount_amount, status, created_at)
-            VALUES (:u, :t, :d, 'completed', :c) RETURNING booking_id
+            INSERT INTO bookings (user_id, total_amount, discount_amount, status, created_at, completed_at)
+            VALUES (:u, :t, :d, 'confirmed', :c, :done) RETURNING booking_id
             """,
-            {"u": user["user_id"], "t": total, "d": discount, "c": created},
+            {
+                "u": user["user_id"], "t": total, "d": discount, "c": created,
+                "done": datetime.combine(day, time(hour, 0), tzinfo=timezone.utc)
+                + timedelta(minutes=30 * n_slots),
+            },
         )
         for k in range(n_slots):
             start = datetime.combine(day, time(hour, 0)) + timedelta(minutes=30 * k)
